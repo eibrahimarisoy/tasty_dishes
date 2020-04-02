@@ -19,16 +19,19 @@ STATUS = "published"
 
 def index(request):
     context = dict()
+    # get all recipes that status is published and order by createt time
     recipes = Recipe.objects.filter(
         status=STATUS,
     ).order_by('-createt_at')
-
+    # get to top 5 ingredients
     most_ingredients = Ingredient.objects.annotate(
         recipe_count=Count('recipe')
     ).order_by('-recipe_count')[:5]
-
+    # send template to recipe count
     context['recipe_count'] = recipes.count()
 
+    # pagination operations with using paginator class
+    # set 2 recipes per page
     paginator = Paginator(recipes, 2)
     page = request.GET.get('page', 1)
     try:
@@ -53,11 +56,15 @@ class RecipeCreate(SuccessMessageMixin, LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         recipe = form.save(commit=False)
+        # set recipe owner and status
         recipe.owner = self.request.user
         recipe.status = STATUS
         recipe.save()
+        # may be user's recipe has same name because of that
+        # slug is name plus pk for preventing to conflict 
         recipe.slug = slugify(recipe.name) + "-" + str(recipe.pk)
         recipe.save()
+        # to save many to many field on form
         form.save_m2m()
         return HttpResponseRedirect(reverse('index'))
 
@@ -75,6 +82,7 @@ class RecipeUpdate(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
 def recipe_detail(request, slug):
     context = dict()
     recipe = get_object_or_404(Recipe, slug=slug)
+    # rating_form for vote to recipe
     rating_form = RatingForm()
     context['rating_form'] = rating_form
     context['recipe'] = recipe
@@ -83,11 +91,13 @@ def recipe_detail(request, slug):
 
 @login_required()
 def like_recipe(request):
+    # this method will be called by AJAX POST
     if request.method == 'POST':
         user = request.user
         slug = request.POST.get('slug', None)
         recipe = get_object_or_404(Recipe, slug=slug)
 
+        # to control if user like recipe
         if recipe.likes.filter(id=user.id).exists():
             recipe.likes.remove(user)
         else:
@@ -108,6 +118,7 @@ def unlike_recipe(request, id):
 
 def list_of_recipes_with(request, ingredient):
     context = dict()
+    # to get recipes that has requested ingredient
     recipes = Recipe.objects.filter(ingredients__name=ingredient)
     most_ingredients = Ingredient.objects.annotate(
         recipe_count=Count('recipe')
@@ -122,6 +133,7 @@ def list_of_recipes_with(request, ingredient):
 def search_recipe(request):
     context = dict()
     search_query = request.GET.get('q', None)
+    # to search requested word is called 'q' in recipes and ingredients
     recipes = Recipe.objects.filter(Q(name__contains=search_query) | Q(
         ingredients__name__contains=search_query)).distinct()
     context['title'] = search_query
@@ -133,6 +145,8 @@ def search_recipe(request):
 def delete_recipe(request, slug):
     recipe = get_object_or_404(Recipe, slug=slug, owner=request.user)
     if recipe:
+        # I  prefer to set recipe's status id deleted instead of
+        # completely delete it 
         recipe.status = "deleted"
         recipe.save()
         messages.info(request, "Your recipe deleted succesfully.")
@@ -143,6 +157,7 @@ def delete_recipe(request, slug):
 
 @login_required()
 def rate_recipe(request):
+    # this method will be called by AJAX POST
     if request.method == 'POST':
         context = dict()
         user = request.user
@@ -150,6 +165,7 @@ def rate_recipe(request):
         point = request.POST.get('point', None)
         recipe = Recipe.objects.get(slug=slug)
         
+        # to control if user vote it before
         if not Rating.objects.filter(owner=user, recipe=recipe).exists():
             Rating.objects.create(owner=user, recipe=recipe, rate=point)
             rating = recipe.rating_set.first().rating_avg()

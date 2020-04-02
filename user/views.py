@@ -13,17 +13,20 @@ def user_register(request):
     context = dict()
     form = RegisterForm(request.POST or None)
     if form.is_valid():
+        # get new user information from form
         username = form.clean_username()
         first_name = form.clean_first_name()
         last_name = form.clean_last_name()
         email = form.clean_email()
         password = form.clean_password()
+        # create new user and set_password and set active
         new_user = User(username=username, last_name=last_name,
                         first_name=first_name, email=email)
         new_user.set_password(password)
         new_user.is_active = True
         new_user.save()
 
+        # login new user
         login(request, new_user)
         messages.success(request, "You have successfully registered.")
         return redirect("index")
@@ -40,18 +43,21 @@ def user_login(request):
         email = form.cleaned_data.get("email")
         password = form.cleaned_data.get("password")
 
+        # if username is not exists throw and error to user
         try:
             username = User.objects.get(email=email).username
         except User.DoesNotExist:
             messages.info(request, "Username is wrong.")
             return render(request, "user/login.html", context)
-
+        
+        # check username and password are correct
         user = authenticate(request, username=username, password=password)
         if user is None:
             messages.info(request, "Username or password is wrong")
             return render(request, "user/login.html", context)
         else:
             messages.success(request, "You have successfully logged in.")
+            # start new session for user
             login(request, user)
             return redirect("index")
 
@@ -66,6 +72,7 @@ def user_logout(request):
 
 @login_required()
 def user_like_recipe_list(request):
+    # to send user's favorite recipes to template
     context = dict()
     user = request.user
     recipes = Recipe.objects.filter(likes=user)
@@ -75,6 +82,7 @@ def user_like_recipe_list(request):
 
 @login_required()
 def user_recipe_list(request):
+    # to show the user their own recipes
     context = dict()
     user = request.user
     recipes = Recipe.objects.filter(
