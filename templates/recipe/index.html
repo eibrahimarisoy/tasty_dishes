@@ -25,8 +25,12 @@
             <div class="col-12 text-center">
                 <p>
                     {{ recipe.createt_at | date:"d/m/Y" }} &middot;
+                    {% if recipe.rating_set.all.count == 0 %}
+                    No Vote
+                    {% else %}
                     {{ recipe.rating_set.first.rating_avg }}/5 (
                     {{ recipe.rating_set.all.count }} Votes)
+                    {% endif %}
                     &middot;
                     {% if recipe.total_likes == 0 %}
                     No like

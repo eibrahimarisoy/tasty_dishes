@@ -29,7 +29,7 @@ POINTS = [
 ]
 
 
-class Ingredients(models.Model):
+class Ingredient(models.Model):
     name = models.CharField(max_length=25)
     def __str__(self):
         return self.name
@@ -56,7 +56,7 @@ class Recipe(models.Model):
     )
     image = models.ImageField(verbose_name="Image")
     ingredients = models.ManyToManyField(
-        Ingredients, 
+        Ingredient, 
         help_text="Hold down the Ctrl (Windows) / Command (Mac) button to select multiple options.")
     likes = models.ManyToManyField(User, related_name='likes')
 

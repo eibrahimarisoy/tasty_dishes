@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.utils.text import slugify
 from django.views.generic.edit import CreateView, UpdateView
 from recipe.forms import RatingForm
-from recipe.models import Ingredients, Rating, Recipe
+from recipe.models import Ingredient, Rating, Recipe
 
 # Create your views here.
 STATUS = "published"
@@ -23,7 +23,7 @@ def index(request):
         status=STATUS,
     ).order_by('-createt_at')
 
-    most_ingredients = Ingredients.objects.annotate(
+    most_ingredients = Ingredient.objects.annotate(
         recipe_count=Count('recipe')
     ).order_by('-recipe_count')[:5]
 
@@ -109,7 +109,7 @@ def unlike_recipe(request, id):
 def list_of_recipes_with(request, ingredient):
     context = dict()
     recipes = Recipe.objects.filter(ingredients__name=ingredient)
-    most_ingredients = Ingredients.objects.annotate(
+    most_ingredients = Ingredient.objects.annotate(
         recipe_count=Count('recipe')
     ).order_by('-recipe_count')[:5]
 
