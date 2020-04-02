@@ -1,0 +1,49 @@
+{% extends "base/base.html" %}
+{% block content %}
+
+{% load crispy_forms_tags %}
+<div class="row">
+    <div class="col-md-6 offset-md-4 mt-3">
+        <h3>Register</h3>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="row  border-top">
+                <div class="col-8">
+                    {{ register_form.username | as_crispy_field }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    {{ register_form.first_name | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ register_form.last_name | as_crispy_field }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-8">
+                    {{ register_form.email | as_crispy_field }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    {{ register_form.password | as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ register_form.confirm | as_crispy_field }}
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-8">
+                    <button type="submit" class="btn btn-block btn-lg btn-danger">Register</button>
+
+                </div>
+            </div>
+    </div>
+    </form>
+</div>
+
+
+{% endblock %}

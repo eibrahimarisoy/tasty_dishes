@@ -1,0 +1,43 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="tab-content mt-3" id="myTabContent">
+    <div class="tab-pane border fade show active bg-light" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <div class="container">
+            <div class="row">
+                <table class="table table-borderless col-8">
+                    <caption class="text-right">
+                        <a class="btn btn-dark" href="{% url 'update_user_profile' %}">Edit Profile</a>
+                        <a class="btn btn-danger" href="{% url 'change_password' %}">Change Password</a>
+                    </caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Membership Informations</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Username</td>
+                            <td>{{ user.username }}</td>
+                        </tr>
+                        <tr>
+                            <td>First Name</td>
+                            <td>{{ user.first_name }}</td>
+                        </tr>
+                        <tr>
+                            <td>Last Name</td>
+                            <td>{{ user.last_name }}</td>
+                        </tr>
+                        <tr>
+                            <td>Email</td>
+                            <td>{{ user.email }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

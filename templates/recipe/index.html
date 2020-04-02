@@ -1,0 +1,88 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block content %}
+<div class="row mt-3">
+    <div class="col-md-7 mr-auto">
+        {% for recipe in recipes %}
+        <div class="row border rounded mb-5">
+            <div class="col text-center">
+                <a href="{% url 'recipe_detail' recipe.slug %}">
+                    <h3 class="font-weight-bold">{{ recipe.name }}</h3>
+                </a>
+            </div>
+            <div class="col-12">
+                <a href="{% url 'recipe_detail' recipe.slug %}">
+                    <img class="mx-auto d-block rounded" src="{{ recipe.image.url }}" alt="" width="275" height="250">
+                </a>
+            </div>
+            <div class="col-12">
+                <p>
+                    {% autoescape off %}
+                    {{ recipe.description | truncatechars:150 }}
+                    {% endautoescape %}
+                </p>
+            </div>
+            <div class="col-12 text-center">
+                <p>
+                    {{ recipe.createt_at | date:"d/m/Y" }} &middot;
+                    {{ recipe.rating_set.first.rating_avg }}/5 (
+                    {{ recipe.rating_set.all.count }} Votes)
+                    &middot;
+                    {% if recipe.total_likes == 0 %}
+                    No like
+                    {% else %}
+                    {{ recipe.total_likes }} Likes
+                    {% endif %}
+                    &middot; by {{ recipe.owner.username }}
+                    {% if recipe.owner.username == request.user.username %}
+                    <a href="{% url 'update_recipe' recipe.slug %}"><span>Edit</span></a>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+        {% if recipes.has_other_pages %}
+        <div class="row justify-content-center">
+            <div class="col-md-auto">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        {% if recipes.has_previous %}
+                        <li class="page-item"><a class="page-link"
+                                href="?page={{ recipes.previous_page_number }}">&laquo;</a>
+                        </li>
+                        {% else %}
+                        <li class="disabled"><span class="page-link">&laquo;</span></li>
+                        {% endif %}
+                        {% for i in recipes.paginator.page_range %}
+                        {% if recipes.number == i %}
+                        <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                        {% else %}
+                        <li><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                        {% if recipes.has_next %}
+                        <li class="page-item"><a class="page-link"
+                                href="?page={{ recipes.next_page_number }}">&raquo;</a>
+                        </li>
+                        {% else %}
+                        <li class="disabled"><span class="page-link">&raquo;</span></li>
+                        {% endif %}
+                    </ul>
+                    <p class="text-center">
+                        Total {{ recipe_count }} Recipes
+                    </p>
+                </nav>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-md-4">
+        <div class="row">
+            {% include "base/components/search_bar.html" %}
+        </div>
+        <div class="row mt-2">
+            {% include "base/components/top_used_ingredients.html" %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

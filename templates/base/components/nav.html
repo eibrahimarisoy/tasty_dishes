@@ -1,0 +1,40 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <!-- LOGO -->
+        <a class="navbar-brand" href="{% url 'index' %}">tastydishes.com</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item active">
+                    <a href="{% url 'recipe-add' %}" class="btn btn-md btn-primary">Share a Recipe</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                {% if request.user.is_authenticated %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'user_like_recipe_list' %}">My Favorite</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'user_recipe_list' %}">My Recipe</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'user_profile' %}">My Profile</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'user_logout' %}">{{ request.user.username }}(Logout)</a>
+                </li>
+                {% elif not request.user.is_authenticated %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'user_login' %}">Login</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'user_register' %}">Register</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

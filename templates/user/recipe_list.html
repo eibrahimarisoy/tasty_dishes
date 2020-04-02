@@ -1,0 +1,56 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="row mt-3">
+    <div class="col-md mr-auto">
+        <h3 class="text-center">Your Recipes</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Recipe Name</th>
+                    <th scope="col">Ingredients</th>
+                    <th scope="col">Operation</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for recipe in recipes %}
+
+                <tr>
+                    <th class="w-25" scope="row">
+                        <a href="{% url 'recipe_detail' recipe.slug %}">
+                            <img src="{{ recipe.image.url}}" class="img-fluid img-thumbnail" height=100 width=100>
+                        </a>
+                    </th>
+                    <td><a href="{% url 'recipe_detail' recipe.slug %}">{{ recipe.name }}</a></td>
+                    <td>
+                        <ul>
+                            {% for ingredient in recipe.ingredients.all %}
+                            <li>{{ ingredient }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                        <div class="dropdown show">
+                            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Operations
+                            </a>
+
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                <a class="dropdown-item" href="{% url 'update_recipe' recipe.slug %}">Edit</a>
+                                <hr>
+                                <a class="dropdown-item" href="{% url 'delete_recipe' recipe.slug %}">Delete</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{% endblock content %}

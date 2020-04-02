@@ -1,0 +1,80 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="row mt-3">
+    <div class="col-md-7 mr-auto">
+        <h3 class="text-center">Search result for "{{ title }}"</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Recipe Name</th>
+                    <th scope="col">Owner</th>
+                    <th scope="col">Ingredients</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for recipe in recipes %}
+
+                <tr>
+                    <th class="w-25" scope="row">
+                        <a href="{% url 'recipe_detail' recipe.slug %}">
+                            <img src="{{ recipe.image.url}}" class="img-fluid img-thumbnail" height=100 width=100>
+                        </a>
+                    </th>
+                    <td><a href="{% url 'recipe_detail' recipe.slug %}">{{ recipe.name }}</a></td>
+                    <td>{{ recipe.owner }}</td>
+                    <td>
+                        <ul>
+                            {% for ingredient in recipe.ingredients.all %}
+                            <li>{{ ingredient }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+                {% endfor %}
+
+
+
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-4">
+        <div class="row">
+            <div class="col-md border py-3 rounded">
+                <div class="row">
+                    <div class="col text-center">
+                        <h4>Search</h4>
+                    </div>
+
+                </div>
+                <div class="row justify-content-center">
+                    <form class="form-inline my-2 my-lg-0">
+                        <input class="form-control mr-sm-2" id="q" name="q" type="search" placeholder="ingredients, dish, keyword"
+                            aria-label="Search">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md border rounded">
+                <h4 class="font-weigh-bold text-center">Top Used Ingredients</h4>
+
+                <ul class="list-group list-group-flush">
+                    {% for ingredient in most_ingredients %}
+                    <a href="{% url 'list_of_recipes_with' ingredient.name %}">
+                        <li class="list-group-item">{{ ingredient }}({{ ingredient.number_recipes }})</li>
+                    </a>
+                    {% endfor %}
+
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

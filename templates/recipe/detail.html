@@ -1,0 +1,98 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="row mt-3">
+    <div class="col-md">
+        <div class="col-12 text-center">
+            <h3 class="font-weight-bold">{{ recipe.name }}</h3>
+        </div>
+        <div class="col-12 text-center">
+            <i class="fas fa-user"></i> {{ recipe.owner }}
+            <i class="fas fa-utensils"></i> {{ recipe.get_difficulty_display }}
+            <i class="fas fa-clock"></i> {{ recipe.createt_at | date:"d/m/Y" }}
+        </div>
+        <div class="col-12 mt-3">
+            <img class="mx-auto d-block rounded" src="{{ recipe.image.url }}" alt="" width="375" height="350">
+        </div>
+        {% if request.user.is_authenticated %}
+        <div class="col-12 text-center mt-1">
+            <button type="button" id="like" name="{{ recipe.slug }}" class="btn btn-success rounded">Like (<span
+                    id="likes_count">{{ recipe.total_likes }}</span>)</button>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+            <script>
+                $('#like').click(function () {
+                    var slug = $(this).attr('name');
+                    var url = "{% url 'like_recipe' %}"
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: {
+                            'slug': slug,
+                            'csrfmiddlewaretoken': '{{ csrf_token }}'
+                        },
+                        dataType: "json",
+                        success: function (response) {
+                            $("#likes_count").html(
+                                response.likes_count
+                            );
+                        },
+                    });
+                });
+            </script>
+        </div>
+        {% endif %}
+        <div class="row">
+            <div class="col-6 mx-auto">
+                <span class="font-weight-bold">Ingredients</span>
+                <ul>
+                    {% for ingredient in recipe.ingredients.all %}
+                    <li>{{ ingredient }}</li>
+                    {% endfor %}
+                </ul>
+                <span class="font-weight-bold">Description</span>
+                <p>
+                    {% autoescape off %}
+                    {{ recipe.description }}
+                    {% endautoescape %}
+                </p>
+            </div>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="col-2 text-center">
+                <p><span id="rating">{{ recipe.rating_set.first.rating_avg }}</span>/10</p>
+                {% if request.user.is_authenticated %}
+                {{ rating_form | crispy }}
+                <button type="button" id="rate" name="{{ recipe.slug }}" class="btn btn-success rounded">Rate</button>
+                {% endif %}
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+                <script>
+                    $('#rate').click(function () {
+                        var slug = $(this).attr('name');
+                        var url = "{% url 'rate_recipe' %}";
+                        var point = $('#id_rate').val();
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            data: {
+                                'slug': slug,
+                                'point': point,
+                                'csrfmiddlewaretoken': '{{ csrf_token }}'
+                            },
+                            dataType: "json",
+                            success: function (response) {
+                                $("#rating").html(
+                                    response.rating
+                                );
+                                if (response.error) {
+                                    alert(response.error)
+                                }
+                            },
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

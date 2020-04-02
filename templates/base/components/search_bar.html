@@ -1,0 +1,14 @@
+<div class="col-md border py-3 rounded">
+    <div class="row">
+        <div class="col text-center">
+            <h4>Search</h4>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <form class="form-inline my-2 my-lg-0" action="{% url 'search_recipe' %}" method="get">
+            <input class="form-control mr-sm-2" id="q" name="q" type="search"
+                placeholder="ingredients, dish, keyword" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </div>
+</div>

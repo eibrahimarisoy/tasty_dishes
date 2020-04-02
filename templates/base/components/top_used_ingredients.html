@@ -1,0 +1,10 @@
+<div class="col-md border rounded pt-2">
+    <h4 class="font-weigh-bold text-center">Top Used Ingredients</h4>
+    <ul>
+        {% for ingredient in most_ingredients %}
+        <a href="{% url 'list_of_recipes_with' ingredient.name %}">
+            <li>{{ ingredient }}({{ ingredient.recipe_count }})</li>
+        </a>
+        {% endfor %}
+    </ul>
+</div>
