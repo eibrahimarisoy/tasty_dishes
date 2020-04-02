@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Column, HTML, Layout, Reset, Row, Submit
+from crispy_forms.layout import Column, HTML, Layout, Row, Submit
 
 
 class LoginForm(forms.Form):
@@ -31,9 +31,9 @@ class RegisterForm(forms.Form):
             raise forms.ValidationError(errors)
         if User.objects.filter(email=email):
             errors['email'] = f"{email} is used."
-        
+
         if User.objects.filter(username=username):
-            errors['username'] = f"{username} is used."        
+            errors['username'] = f"{username} is used."
 
         if len(password) < 8:
             errors['password'] = 'Your password must contain at least 8 characters.'
@@ -120,17 +120,15 @@ class UserUpdateForm(forms.ModelForm):
                 <div class="text-center">
                       <p>
                         <small class="text-danger">
-                        Please make sure you have entered all the information correctly to complete your registration.                        </small>
+                        Please make sure you have entered all the information correctly to complete your registration.</small>
                       </p>
                     </div>
                 """
             )
         )
-    
+
     def clean_email(self):
         email = self.cleaned_data['email']
         if User.objects.filter(email=email).exists():
             raise ValidationError("Email already exists")
         return email
-
-

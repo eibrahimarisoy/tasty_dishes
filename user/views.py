@@ -9,6 +9,7 @@ from recipe.models import Recipe
 
 STATUS = "published"
 
+
 def user_register(request):
     context = dict()
     form = RegisterForm(request.POST or None)
@@ -49,7 +50,7 @@ def user_login(request):
         except User.DoesNotExist:
             messages.info(request, "Username is wrong.")
             return render(request, "user/login.html", context)
-        
+
         # check username and password are correct
         user = authenticate(request, username=username, password=password)
         if user is None:
@@ -62,6 +63,7 @@ def user_login(request):
             return redirect("index")
 
     return render(request, "user/login.html", context)
+
 
 @login_required()
 def user_logout(request):
@@ -87,7 +89,7 @@ def user_recipe_list(request):
     user = request.user
     recipes = Recipe.objects.filter(
         owner=user,
-        status=STATUS,    
+        status=STATUS,
     )
     context['recipes'] = recipes
     return render(request, "user/recipe_list.html", context)
@@ -128,6 +130,6 @@ def change_password(request):
             messages.error(request, 'You have logged in incorrectly!')
     else:
         form = PasswordChangeForm(request.user)
-    
+
     context['form'] = form
     return render(request, 'user/change_password.html', context)

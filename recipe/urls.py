@@ -1,11 +1,11 @@
 from django.urls import path
 from recipe.views import (
-    index, 
+    index,
     RecipeCreate,
-    RecipeUpdate, 
-    recipe_detail, 
+    RecipeUpdate,
+    recipe_detail,
     like_recipe,
-    unlike_recipe, 
+    unlike_recipe,
     list_of_recipes_with,
     search_recipe,
     delete_recipe,
@@ -20,10 +20,13 @@ urlpatterns = [
     path('detail/<slug:slug>/', recipe_detail, name="recipe_detail"),
 
     path('search/', search_recipe, name="search_recipe"),
-    path('list-of-recipes-with/<str:ingredient>/', list_of_recipes_with, name='list_of_recipes_with'),
-    
+    path(
+        'list-of-recipes-with/<str:ingredient>/',
+        list_of_recipes_with,
+        name='list_of_recipes_with',
+        ),
+
     path('like/', like_recipe, name="like_recipe"),
     path('unlike/<str:id>/', unlike_recipe, name="unlike_recipe"),
     path('rate/', rate_recipe, name="rate_recipe"),
-
 ]

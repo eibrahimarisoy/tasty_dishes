@@ -17,6 +17,7 @@ from recipe.models import Ingredient, Rating, Recipe
 # Create your views here.
 STATUS = "published"
 
+
 def index(request):
     context = dict()
     # get all recipes that status is published and order by createt time
@@ -40,7 +41,7 @@ def index(request):
         recipes = paginator.page(1)
     except EmptyPage:
         recipes = paginator.page(paginator.num_pages)
-    
+
     context["recipes"] = recipes
     context['most_ingredients'] = most_ingredients
     return render(request, 'recipe/index.html', context)
@@ -61,7 +62,7 @@ class RecipeCreate(SuccessMessageMixin, LoginRequiredMixin, CreateView):
         recipe.status = STATUS
         recipe.save()
         # may be user's recipe has same name because of that
-        # slug is name plus pk for preventing to conflict 
+        # slug is name plus pk for preventing to conflict
         recipe.slug = slugify(recipe.name) + "-" + str(recipe.pk)
         recipe.save()
         # to save many to many field on form
@@ -146,7 +147,7 @@ def delete_recipe(request, slug):
     recipe = get_object_or_404(Recipe, slug=slug, owner=request.user)
     if recipe:
         # I  prefer to set recipe's status id deleted instead of
-        # completely delete it 
+        # completely delete it
         recipe.status = "deleted"
         recipe.save()
         messages.info(request, "Your recipe deleted succesfully.")
@@ -164,17 +165,23 @@ def rate_recipe(request):
         slug = request.POST.get('slug', None)
         point = request.POST.get('point', None)
         recipe = Recipe.objects.get(slug=slug)
-        
+
         # to control if user vote it before
         if not Rating.objects.filter(owner=user, recipe=recipe).exists():
             Rating.objects.create(owner=user, recipe=recipe, rate=point)
             rating = recipe.rating_set.first().rating_avg()
             context['rating'] = rating
             context['point'] = point
-            return HttpResponse(json.dumps(context), content_type='application/json')
+            return HttpResponse(
+                json.dumps(context),
+                content_type='application/json',
+                )
         context['error'] = "You have already rated this recipe."
-        return HttpResponse(json.dumps(context), content_type='application/json')
-        
+        return HttpResponse(
+            json.dumps(context),
+            content_type='application/json',
+            )
+
 
 def error_404_view(request, exception):
-    return render(request,'base/page-404.html')  
+    return render(request, 'base/page-404.html')

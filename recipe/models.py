@@ -31,6 +31,7 @@ POINTS = [
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=25)
+
     def __str__(self):
         return self.name
 
@@ -56,29 +57,29 @@ class Recipe(models.Model):
     )
     image = models.ImageField(verbose_name="Image")
     ingredients = models.ManyToManyField(
-        Ingredient, 
+        Ingredient,
         help_text="Hold down the Ctrl (Windows) / Command (Mac) button to select multiple options.")
     likes = models.ManyToManyField(User, related_name='likes')
 
     createt_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     @property
     def total_likes(self):
         return self.likes.count()
 
-
     def __str__(self):
-       return self.name
+        return self.name
 
-    
+
 class Rating(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     rate = models.IntegerField(
         choices=POINTS,
         default=DEFAULT_POINT,
-    )
+        )
+
     def rating_avg(self):
         sum = Rating.objects.filter(
             recipe=self.recipe
