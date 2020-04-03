@@ -7,7 +7,7 @@ This is a simple recipe sharing application.
 - Anonymous people can only search and look into recipes.
 
 # Recipe Features
-- Name, Difficulty, Image, Description and Ingredients that may be expanded.
+- Recipe model has Name, Difficulty, Image, Description and Ingredients that may be expanded.
 
 # Installation
 ```sh
